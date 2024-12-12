@@ -21,19 +21,20 @@
 // }
 
 // This Scripted Pipeline
-node {
-    def dockerImage = 'node:16-buster-slim'
-    def dockerArgs = '-p 3000:3000'
-    def dockerImageId
-
-    stage('Build') {
-        dockerImageId = docker.image(dockerImage).id
-        sh "docker run --rm -v ${env.WORKSPACE}:/app ${dockerImageId} /bin/sh -c 'cd /app && npm install'"
-    }
-
-    stage('Test') {
-        sh "docker run --rm -v ${env.WORKSPACE}:/app ${dockerImageId} /bin/sh -c 'pwd'"
-        sh "docker run --rm -v ${env.WORKSPACE}:/app ${dockerImageId} /bin/sh -c 'ls -l /app'"
-        sh "docker run --rm -v ${env.WORKSPACE}:/app ${dockerImageId} /bin/sh -c '/app/jenkins/scripts/test.sh'"
+node('docker') {
+    // Use docker image equivalent in scripted pipeline
+    docker.image('node:16-buster-slim').inside('-p 3000:3000') {
+        stage('Build') {
+            // Checkout SCM is typically added in scripted pipelines
+            checkout scm
+            
+            // Equivalent to npm install step
+            sh 'npm install'
+        }
+        
+        stage('Test') {
+            // Equivalent to test script execution
+            sh './jenkins/scripts/test.sh'
+        }
     }
 }
