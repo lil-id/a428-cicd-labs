@@ -32,6 +32,6 @@ node {
     }
 
     stage('Test') {
-        sh "docker run --rm -v ${env.WORKSPACE}:/app ${dockerImageId} /bin/sh -c './jenkins/scripts/test.sh'"
+        sh "docker run --rm -v ${env.WORKSPACE}:/app ${dockerImageId} /bin/sh -c '/app/jenkins/scripts/test.sh'"
     }
 }
