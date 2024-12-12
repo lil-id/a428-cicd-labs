@@ -24,9 +24,10 @@
 node {
     def dockerImage = 'node:16-buster-slim'
     def dockerArgs = '-p 3000:3000'
+    def dockerImageId
 
     stage('Build') {
-        def dockerImageId = docker.image(dockerImage).id
+        dockerImageId = docker.image(dockerImage).id
         sh "docker run --rm -v ${env.WORKSPACE}:/app ${dockerImageId} /bin/sh -c 'cd /app && npm install'"
     }
 
